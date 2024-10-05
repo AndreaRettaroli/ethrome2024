@@ -7,8 +7,8 @@ import {
   Avatar,
   FileInput,
   Text,
-  CircularProgress,
   Switch,
+  Spinner,
 } from "@telegram-apps/telegram-ui";
 
 import {
@@ -123,7 +123,7 @@ export default function New() {
             </div>
             <Placeholder description="Your protected data will have the public name of your downloaded file.">
               {isLoading ? (
-                <CircularProgress progress={80} size="large" />
+                <Spinner size="l" />
               ) : (
                 <form className="flex flex-col justify-center items-center gap-4">
                   {selectedFile && (
@@ -140,7 +140,6 @@ export default function New() {
                       checked={toggle}
                       defaultChecked={toggle}
                     />
-                    <Text></Text>
                   </div>
                   <Button
                     size="l"

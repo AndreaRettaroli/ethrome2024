@@ -15,6 +15,14 @@ export default function Profile() {
   const { disconnect } = useDisconnect();
   const router = useRouter();
 
+  const copyToClipboard = () => {
+    const textToCopy = `https://localhost:3000/creator/${address}`;
+
+    navigator.clipboard.writeText(textToCopy).catch((err) => {
+      console.error("Failed to copy text: ", err);
+    });
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       {address ? (
@@ -34,22 +42,29 @@ export default function Profile() {
             <div className="grow">
               <Placeholder
                 action={
-                  <Button
-                    size="l"
-                    stretched
-                    onClick={() => router.push("/profile/new")}
-                  >
-                    Create Content
-                  </Button>
+                  <>
+                    <Button size="l" stretched onClick={copyToClipboard}>
+                      Share Creator Profile
+                    </Button>
+                    <Button
+                      size="l"
+                      stretched
+                      onClick={() => router.push("/profile/new")}
+                    >
+                      Create Content
+                    </Button>
+                  </>
                 }
                 description="Be a creator, upload your content"
                 header={`${address.slice(0, 4)}...${address.slice(-4)}`}
               />
             </div>
             <div className="grow">
-              <Placeholder description="" header={`Your Contents`}>
-                <MyContents owner={address as `0x${string}`} />
-              </Placeholder>
+              <Placeholder
+                description=""
+                header={`Your Contents`}
+                action={<MyContents owner={address as `0x${string}`} />}
+              ></Placeholder>
             </div>
             <div className="grow">
               <Placeholder
