@@ -7,27 +7,97 @@ import {
   Avatar,
   FileInput,
   Text,
+  CircularProgress,
+  Switch,
 } from "@telegram-apps/telegram-ui";
 
-import { IExecDataProtectorSharing } from "@iexec/dataprotector";
+import {
+  IExecDataProtector,
+  createArrayBufferFromFile,
+} from "@iexec/dataprotector";
 import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
 
 import { injected } from "wagmi/connectors";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { getOrCreateCollection } from "@/utils/getOrCreateCollection";
+import { useRouter } from "next/navigation";
 
 export default function New() {
   const { address, chain } = useAccount();
   const { connect } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { data: wallet } = useWalletClient();
+  const router = useRouter();
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [toggle, setToggle] = useState(true);
 
   const handleFileChange = (event) => {
+    event.preventDefault();
     const file = event.target.files[0]; // Only allows one file (multiple={false})
     setSelectedFile(file);
     console.log("🚀 ~ handleFileChange ~ file:", selectedFile);
   };
+
+  const handleSubmit = async (e) => {
+    setIsLoading(true);
+    try {
+      const dataProtector = new IExecDataProtector(wallet);
+      if (selectedFile) {
+        const fileAsArrayBuffer = await createArrayBufferFromFile(selectedFile);
+        const protectedFileAddress = await dataProtector.core.protectData({
+          data: { file: fileAsArrayBuffer },
+          name: selectedFile?.name ?? "",
+          // onStatusUpdate: (status) => {
+          //   keepInterestingStatusUpdates(onStatusUpdate, status);
+          // },
+        });
+        console.log(
+          "🚀 ~ handleSubmit ~ protectedFileAddress:",
+          protectedFileAddress
+        );
+        // 2- Get or create collection
+        const collectionId = await getOrCreateCollection({
+          wallet: wallet,
+        });
+        console.log("🚀 ~ handleSubmit ~ collectionId:", collectionId);
+
+        // 3- Add to collection
+
+        const res = await dataProtector.sharing.addToCollection({
+          protectedData: protectedFileAddress.address,
+          collectionId,
+          addOnlyAppWhitelist:
+            process.env.NEXT_PUBLIC_DATA_DELIVERY_WHITELIST_ADDRESS!,
+          onStatusUpdate: (status) => {
+            if (status.title === "APPROVE_COLLECTION_CONTRACT") {
+              const title =
+                "Approve DataProtector Sharing smart-contract to manage this protected data";
+              console.log("🚀 ~ handleSubmit ~ title:", title);
+            } else if (status.title === "ADD_PROTECTED_DATA_TO_COLLECTION") {
+              const title = "Add protected data to your collection";
+              console.log("🚀 ~ handleSubmit ~ title:", title);
+            }
+          },
+        });
+        console.log("🚀 ~ handleSubmit ~ dataProtector:", res);
+        if (true) {
+          const res =
+            await dataProtector.sharing.setProtectedDataToSubscription({
+              protectedData: protectedFileAddress.address,
+            });
+          console.log("🚀 ~ handleSubmit ~ res:", res);
+        }
+        router.push("/profile");
+      }
+    } catch (e) {
+      console.error("🚀 ~ handleSubmit ~ e:", e);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       {address ? (
@@ -51,22 +121,36 @@ export default function New() {
               ></Placeholder>
             </div>
             <Placeholder description="Your protected data will have the public name of your downloaded file.">
-              <form className="flex flex-col justify-center items-center g-2">
-                {selectedFile && (
-                  <Text weight="1">{selectedFile.name ?? ""}</Text>
-                )}
-                <FileInput
-                  multiple={false}
-                  onChange={(e) => handleFileChange(e)}
-                />
-                <Button
-                  size="l"
-                  stretched
-                  onClick={() => connect({ connector: injected() })}
-                >
-                  Submit
-                </Button>
-              </form>
+              {isLoading ? (
+                <CircularProgress progress={80} size="large" />
+              ) : (
+                <form className="flex flex-col justify-center items-center gap-4">
+                  {selectedFile && (
+                    <Text weight="1">{selectedFile.name ?? ""}</Text>
+                  )}
+                  <FileInput
+                    multiple={false}
+                    onChange={(e) => handleFileChange(e)}
+                  />
+                  <div className="flex flex-row gap-2">
+                    <Text>{toggle ? "With Subscription" : "Free"}</Text>
+                    <Switch
+                      onChange={(e) => setToggle((prev) => !prev)}
+                      checked={toggle}
+                      defaultChecked={toggle}
+                    />
+                    <Text></Text>
+                  </div>
+                  <Button
+                    size="l"
+                    stretched
+                    disabled={!selectedFile}
+                    onClick={(e) => handleSubmit(e)}
+                  >
+                    Submit
+                  </Button>
+                </form>
+              )}
             </Placeholder>
           </div>
         </>
