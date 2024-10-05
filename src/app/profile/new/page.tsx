@@ -19,8 +19,14 @@ export default function New() {
   const { address, chain } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
-  const [file, setFile] = useState<File | undefined>();
 
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0]; // Only allows one file (multiple={false})
+    setSelectedFile(file);
+    console.log("🚀 ~ handleFileChange ~ file:", selectedFile);
+  };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       {address ? (
@@ -41,22 +47,23 @@ export default function New() {
               <Placeholder
                 description="Be a creator, upload your content"
                 header={`${address.slice(0, 4)}...${address.slice(-4)}`}
-              >
-                <form>
-                  <FileInput
-                    multiple={false}
-                    onChange={function noRefCheck() {}}
-                  />
-                  <Button
-                    size="l"
-                    stretched
-                    onClick={() => connect({ connector: injected() })}
-                  >
-                    Submit
-                  </Button>
-                </form>
-              </Placeholder>
+              ></Placeholder>
             </div>
+            <Placeholder description="Your protected data will have the public name of your downloaded file.">
+              <form>
+                <FileInput
+                  multiple={false}
+                  onChange={(e) => handleFileChange(e)}
+                />
+                <Button
+                  size="l"
+                  stretched
+                  onClick={() => connect({ connector: injected() })}
+                >
+                  Submit
+                </Button>
+              </form>
+            </Placeholder>
           </div>
         </>
       ) : (
