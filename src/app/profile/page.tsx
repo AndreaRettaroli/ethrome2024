@@ -58,7 +58,7 @@ export default function Profile() {
             <div className="grow">
               <Placeholder
                 action={
-                  <Button size="s" stretched onClick={() => disconnect()}>
+                  <Button size="l" stretched onClick={() => disconnect()}>
                     Disconnect
                   </Button>
                 }

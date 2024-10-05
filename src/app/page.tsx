@@ -1,22 +1,10 @@
 "use client";
 
-import {
-  Section,
-  Cell,
-  Image,
-  List,
-  Placeholder,
-  Button,
-  Tabbar,
-} from "@telegram-apps/telegram-ui";
+import { Placeholder, Button } from "@telegram-apps/telegram-ui";
 
 import { useAccount, useConnect, useDisconnect } from "wagmi";
-import Sub from "@/components/Sub/Sub";
-import CreateButton from "@/components/Sub/Create";
-import { injected } from "wagmi/connectors";
-import { TabbarItem } from "@telegram-apps/telegram-ui/dist/components/Layout/Tabbar/components/TabbarItem/TabbarItem";
 
-const tabs = ["profile", "subscriptions"];
+import { injected } from "wagmi/connectors";
 
 export default function Home() {
   const { address, chain } = useAccount();
@@ -33,16 +21,6 @@ export default function Home() {
             </p>
             <button onClick={() => disconnect()}>Disconnect</button>
           </div>
-          <div>
-            <Tabbar>
-              {tabs.map((tab) => (
-                <TabbarItem
-                  text={tab}
-                  onClick={() => alert("ciao")}
-                ></TabbarItem>
-              ))}
-            </Tabbar>
-          </div>
         </>
       ) : (
         <>
@@ -54,11 +32,11 @@ export default function Home() {
                   stretched
                   onClick={() => connect({ connector: injected() })}
                 >
-                  Connect
+                  Connect Hello
                 </Button>
               }
-              description="Join the best Telegram VIP betting community"
-              header="Telegram VIP Betting"
+              description="Join the best Telegram VIP communities experience"
+              header="Telegram VIP Communities"
             >
               <img
                 width={100}
