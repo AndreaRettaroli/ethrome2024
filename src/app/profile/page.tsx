@@ -108,7 +108,6 @@ export default function Profile() {
           await dataProtectorSharing.getCollectionsByOwner({
             owner,
           });
-        console.log("🚀 ~ queryFn: ~ collections:", collections);
         return collections;
       },
     });
@@ -119,10 +118,8 @@ export default function Profile() {
         {isError && <p>Error: {error.message}</p>}
         {isSuccess && (
           <ul>
-            {allCollections.map((collection: any) => (
-              <li key={collection.id}>
-                {collection.id} {collection.creationTimestamp.toString()}
-              </li>
+            {allCollections[0].protectedDatas.map((item: any) => (
+              <li key={item.id}>{item.name}</li>
             ))}
           </ul>
         )}
