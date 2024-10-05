@@ -17,7 +17,9 @@ import { injected } from "wagmi/connectors";
 import { TabbarItem } from "@telegram-apps/telegram-ui/dist/components/Layout/Tabbar/components/TabbarItem/TabbarItem";
 import Link from "next/link";
 
-export default function Home() {
+const tabs = ["profile", "creators"];
+
+export default function Creators() {
   const { address, chain } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
@@ -27,12 +29,16 @@ export default function Home() {
       {address ? (
         <>
           <div className="grow">
-            <p>
-              Connected to {address} on {chain?.id}
-            </p>
-            <button onClick={() => disconnect()}>Disconnect</button>
-            <Sub />
-            <CreateButton />
+            <p>creators</p>
+          </div>
+          <div>
+            <Tabbar>
+              {tabs.map((tab) => (
+                <Link href={`/${tab}`}>
+                  <TabbarItem text={tab} onClick={() => "ciao"} />
+                </Link>
+              ))}
+            </Tabbar>
           </div>
         </>
       ) : (

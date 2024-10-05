@@ -25,6 +25,7 @@ import { WagmiProvider } from "@privy-io/wagmi";
 import { privyConfig } from "@/privyConfig";
 import { wagmiConfig } from "@/wagmiConfig";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import TabbarMenu from "../TabbarMenu";
 
 const queryClient = new QueryClient();
 
@@ -51,9 +52,15 @@ function App(props: PropsWithChildren) {
       appearance={miniApp.isDark ? "dark" : "light"}
       platform={["macos", "ios"].includes(lp.platform) ? "ios" : "base"}
     >
-      <PrivyProvider appId={process.env.NEXT_PUBLIC_APP_ID!} config={privyConfig}>
+      <PrivyProvider
+        appId={process.env.NEXT_PUBLIC_APP_ID!}
+        config={privyConfig}
+      >
         <QueryClientProvider client={queryClient}>
-          <WagmiProvider config={wagmiConfig}>{props.children}</WagmiProvider>
+          <WagmiProvider config={wagmiConfig}>
+            {props.children}
+            <TabbarMenu />
+          </WagmiProvider>
         </QueryClientProvider>
       </PrivyProvider>
     </AppRoot>
