@@ -57,20 +57,6 @@ export default function New() {
                 </form>
               </Placeholder>
             </div>
-            <div className="grow">
-              <Placeholder description="" header={`Your Contents`}>
-                <MyContents owner={address as `0x${string}`} />
-              </Placeholder>
-            </div>
-            <div className="grow">
-              <Placeholder
-                action={
-                  <Button size="l" stretched onClick={() => disconnect()}>
-                    Disconnect
-                  </Button>
-                }
-              />
-            </div>
           </div>
         </>
       ) : (
