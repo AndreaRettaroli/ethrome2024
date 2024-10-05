@@ -13,6 +13,7 @@ import {
 
 import {
   IExecDataProtector,
+  IExecDataProtectorSharing,
   createArrayBufferFromFile,
 } from "@iexec/dataprotector";
 import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
