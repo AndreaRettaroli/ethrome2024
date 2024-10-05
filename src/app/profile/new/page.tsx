@@ -6,6 +6,7 @@ import {
   Card,
   Avatar,
   FileInput,
+  Text,
 } from "@telegram-apps/telegram-ui";
 
 import { IExecDataProtectorSharing } from "@iexec/dataprotector";
@@ -50,7 +51,10 @@ export default function New() {
               ></Placeholder>
             </div>
             <Placeholder description="Your protected data will have the public name of your downloaded file.">
-              <form>
+              <form className="flex flex-col justify-center items-center g-2">
+                {selectedFile && (
+                  <Text weight="1">{selectedFile.name ?? ""}</Text>
+                )}
                 <FileInput
                   multiple={false}
                   onChange={(e) => handleFileChange(e)}
