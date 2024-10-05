@@ -1,74 +1,68 @@
 "use client";
 
-import { Section, Cell, Image, List } from "@telegram-apps/telegram-ui";
+import {
+  Section,
+  Cell,
+  Image,
+  List,
+  Placeholder,
+  Button,
+  Tabbar,
+} from "@telegram-apps/telegram-ui";
 
-import { Link } from "@/components/Link/Link";
-
-import tonSvg from "./_assets/ton.svg";
-import { useAccount, useConnect } from "wagmi";
-import { useLogin, useLogout } from "@privy-io/react-auth";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 import Sub from "@/components/Sub/Sub";
 import CreateButton from "@/components/Sub/Create";
 import { injected } from "wagmi/connectors";
+import { TabbarItem } from "@telegram-apps/telegram-ui/dist/components/Layout/Tabbar/components/TabbarItem/TabbarItem";
+
+const tabs = ["profile", "subscriptions"]
 
 export default function Home() {
   const { address, chain } = useAccount();
   const { connect } = useConnect();
-
-  const { logout } = useLogout();
-  const { login } = useLogin();
+  const { disconnect } = useDisconnect();
   return (
-    <List>
+    <div className="flex flex-col items-center justify-center min-h-screen">
       {address ? (
-        <div>
+        <><div className="grow">
           <p>
             Connected to {address} on {chain?.id}
           </p>
-          <button onClick={logout}>Logout</button>
+          <button onClick={() => disconnect()}>Disconnect</button>
           <Sub />
           <CreateButton />
-        </div>
+        </div><div>
+          <Tabbar>{tabs.map((tab) => <TabbarItem text={tab} onClick={() => alert("ciao")}></TabbarItem>)}
+          </Tabbar>
+        </div></>
       ) : (
-        <div>
-          <button onClick={login}>Login</button>
-          <button onClick={() => connect({ connector: injected() })}>Metamask</button>
-        </div>
-      )}
-      <Section
-        header="Features"
-        footer="You can use these pages to learn more about features, provided by Telegram Mini Apps and other useful projects"
-      >
-        <Link href="/ton-connect">
-          <Cell
-            before={
-              <Image src={tonSvg.src} style={{ backgroundColor: "#007AFF" }} />
+        <>
+        <div className="grow">
+          <Placeholder
+            action={
+              <Button
+                size="l"
+                stretched
+                onClick={() => connect({ connector: injected() })}
+              >
+                Connect
+              </Button>
             }
-            subtitle="Connect your TON wallet"
+            description="Join the best Telegram VIP betting community"
+            header="Telegram VIP Betting"
           >
-            TON Connect
-          </Cell>
-        </Link>
-      </Section>
-      <Section
-        header="Application Launch Data"
-        footer="These pages help developer to learn more about current launch information"
-      >
-        <Link href="/init-data">
-          <Cell subtitle="User data, chat information, technical data">
-            Init Data
-          </Cell>
-        </Link>
-        <Link href="/launch-params">
-          <Cell subtitle="Platform identifier, Mini Apps version, etc.">
-            Launch Parameters
-          </Cell>
-        </Link>
-        <Link href="/theme-params">
-          <Cell subtitle="Telegram application palette information">
-            Theme Parameters
-          </Cell>
-        </Link>
-      </Section>
-    </List>
+            <img
+              width={100}
+              height={100}
+              alt="Telegram sticker"
+              className="blt0jZBzpxuR4oDhJc8s"
+              src="https://xelene.me/telegram.gif"
+            />
+          </Placeholder>
+        </div>
+        </>
+      )}
+    </div>
   );
 }
