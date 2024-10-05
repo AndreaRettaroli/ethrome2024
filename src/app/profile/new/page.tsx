@@ -1,19 +1,25 @@
 "use client";
 
-import { Placeholder, Button, Card, Avatar } from "@telegram-apps/telegram-ui";
+import {
+  Placeholder,
+  Button,
+  Card,
+  Avatar,
+  FileInput,
+} from "@telegram-apps/telegram-ui";
 
 import { IExecDataProtectorSharing } from "@iexec/dataprotector";
 import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
 
 import { injected } from "wagmi/connectors";
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 
-export default function Profile() {
+export default function New() {
   const { address, chain } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
-  const router = useRouter();
+  const [file, setFile] = useState<File | undefined>();
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -33,18 +39,23 @@ export default function Profile() {
             </div>
             <div className="grow">
               <Placeholder
-                action={
+                description="Be a creator, upload your content"
+                header={`${address.slice(0, 4)}...${address.slice(-4)}`}
+              >
+                <form>
+                  <FileInput
+                    multiple={false}
+                    onChange={function noRefCheck() {}}
+                  />
                   <Button
                     size="l"
                     stretched
-                    onClick={() => router.push("/profile/new")}
+                    onClick={() => connect({ connector: injected() })}
                   >
-                    Create Content
+                    Submit
                   </Button>
-                }
-                description="Be a creator, upload your content"
-                header={`${address.slice(0, 4)}...${address.slice(-4)}`}
-              />
+                </form>
+              </Placeholder>
             </div>
             <div className="grow">
               <Placeholder description="" header={`Your Contents`}>
