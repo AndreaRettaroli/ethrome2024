@@ -7,6 +7,7 @@ export const privyConfig: PrivyClientConfig = {
     createOnLogin: "users-without-wallets",
     requireUserPasswordOnCreate: false,
     noPromptOnSignature: true,
+    waitForTransactionConfirmation: true,
   },
   defaultChain: iXec,
   supportedChains: [iXec],

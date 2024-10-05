@@ -5,11 +5,15 @@ import { Section, Cell, Image, List } from "@telegram-apps/telegram-ui";
 import { Link } from "@/components/Link/Link";
 
 import tonSvg from "./_assets/ton.svg";
-import { useAccount } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
 import { useLogin, useLogout } from "@privy-io/react-auth";
+import Sub from "@/components/Sub/Sub";
+import CreateButton from "@/components/Sub/Create";
+import { injected } from "wagmi/connectors";
 
 export default function Home() {
   const { address, chain } = useAccount();
+  const { connect } = useConnect();
 
   const { logout } = useLogout();
   const { login } = useLogin();
@@ -21,10 +25,13 @@ export default function Home() {
             Connected to {address} on {chain?.id}
           </p>
           <button onClick={logout}>Logout</button>
+          <Sub />
+          <CreateButton />
         </div>
       ) : (
         <div>
           <button onClick={login}>Login</button>
+          <button onClick={() => connect({ connector: injected() })}>Metamask</button>
         </div>
       )}
       <Section
