@@ -1,7 +1,7 @@
 "use client";
 
 import useSubscriptionUser from "@/hooks/useSubscriptionUser";
-import { CollectionWithProtectedDatas, IExecDataProtectorSharing } from "@iexec/dataprotector";
+import { CollectionWithProtectedDatas, IExecDataProtectorSharing, ProtectedDataInCollection } from "@iexec/dataprotector";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@telegram-apps/telegram-ui";
 import { useWalletClient } from "wagmi";
@@ -23,7 +23,6 @@ export default function Creator({params}: {params: {address: string}}) {
           await dataProtectorSharing.getCollectionsByOwner({
             owner: address,
           });
-        console.log(collections.collections.at(0)?.subscriptionParams?.duration);
         return collections.collections;
       },
     });
@@ -55,6 +54,10 @@ function Subscription({ collection }: { collection: CollectionWithProtectedDatas
     (subscription) => subscription.collection.id === collection.id.toString()
   );
   return (
+    <>
+    {collection.protectedDatas.map((data) => (
+      <ProtectedData data={data} />
+    ))}
     <span>
       {isSubscription ? (
         "Subscribed"
@@ -62,10 +65,16 @@ function Subscription({ collection }: { collection: CollectionWithProtectedDatas
         <Button
           onClick={async () => {
             const dataProtectorSharing = new IExecDataProtectorSharing(wallet);
+            const protectedData = await dataProtectorSharing.getProtectedDataPricingParams({
+              protectedData: collection.protectedDatas.at(0)?.id as string,
+            });
+            console.log(protectedData.protectedDataPricingParams.collection?.subscriptionParams?.price);
+            console.log(protectedData.protectedDataPricingParams.collection?.subscriptionParams?.duration);
+            console.log(collection.id);
             const { txHash } = await dataProtectorSharing.subscribeToCollection({
               collectionId: collection.id, 
-              price: collection.subscriptionParams?.price as number,
-              duration: collection.subscriptionParams?.duration as number,
+              price: protectedData.protectedDataPricingParams.collection?.subscriptionParams?.price as number,
+              duration: protectedData.protectedDataPricingParams.collection?.subscriptionParams?.duration as number,
             });
             console.log(txHash);
             refetchSubscription();
@@ -75,6 +84,28 @@ function Subscription({ collection }: { collection: CollectionWithProtectedDatas
         </Button>
       )}
     </span>
+    </>
   );
 }
 
+function ProtectedData({ data }: { data: ProtectedDataInCollection }) {
+  const { data: wallet } = useWalletClient();
+  const { data: protectedData } = useQuery({
+    queryKey: [data.id],
+    queryFn: async () => {
+      const dataProtectorSharing = new IExecDataProtectorSharing(wallet);
+      const protectedData = await dataProtectorSharing.getProtectedDataPricingParams({
+        protectedData: data.id,
+      });
+      return protectedData;
+    },
+  });
+  console.log(protectedData?.protectedDataPricingParams.collection);
+  return (
+    <div>
+      <h2>Protected Datas</h2>
+      <p>{data.id}</p>
+      <p>{data.name}</p>
+    </div>
+  );
+}
