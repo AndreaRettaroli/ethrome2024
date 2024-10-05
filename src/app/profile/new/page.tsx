@@ -13,13 +13,12 @@ import {
 
 import {
   IExecDataProtector,
-  IExecDataProtectorSharing,
   createArrayBufferFromFile,
 } from "@iexec/dataprotector";
-import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
+import { useAccount, useConnect, useWalletClient } from "wagmi";
 
 import { injected } from "wagmi/connectors";
-import { useQuery } from "@tanstack/react-query";
+
 import { useState } from "react";
 import { getOrCreateCollection } from "@/utils/getOrCreateCollection";
 import { useRouter } from "next/navigation";
@@ -110,7 +109,7 @@ export default function New() {
 
               {/* Avatar using Telegram UI Avatar component */}
               <Avatar
-                className="relative z-10 mb-10 mt-20 size-[118px] border-4 border-[#D9D9D9]"
+                className="relative z-10  mt-20 size-[118px] border-4 border-[#D9D9D9]"
                 size={96}
                 src={`/avatars/Avatar1.png`}
               />
@@ -183,42 +182,4 @@ export default function New() {
       )}
     </div>
   );
-
-  function MyContents({ owner }: { owner: `0x${string}` }) {
-    const { data: wallet } = useWalletClient();
-    const {
-      isLoading,
-      isSuccess,
-      data: allCollections,
-      isError,
-      error,
-    } = useQuery({
-      queryKey: ["allCollections-" + owner],
-      queryFn: async () => {
-        const dataProtectorSharing = new IExecDataProtectorSharing(wallet);
-        const { collections } =
-          await dataProtectorSharing.getCollectionsByOwner({
-            owner,
-          });
-        console.log("🚀 ~ queryFn: ~ collections:", collections);
-        return collections;
-      },
-    });
-
-    return (
-      <div>
-        {isLoading && <p>Loading...</p>}
-        {isError && <p>Error: {error.message}</p>}
-        {isSuccess && (
-          <ul>
-            {allCollections.map((collection: any) => (
-              <li key={collection.id}>
-                {collection.id} {collection.creationTimestamp.toString()}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    );
-  }
 }

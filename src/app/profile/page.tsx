@@ -8,11 +8,14 @@ import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
 import { injected } from "wagmi/connectors";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { daysToSeconds, rlcToNrlc } from "@/utils/utils";
+import { getOrCreateCollection } from "@/utils/getOrCreateCollection";
 
 export default function Profile() {
   const { address, chain } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
+  const { data: wallet } = useWalletClient();
   const router = useRouter();
 
   const copyToClipboard = () => {
@@ -20,6 +23,18 @@ export default function Profile() {
 
     navigator.clipboard.writeText(textToCopy).catch((err) => {
       console.error("Failed to copy text: ", err);
+    });
+  };
+
+  const enableSubscription = async () => {
+    const dataProtectorSharing = new IExecDataProtectorSharing(wallet);
+    const collectionId = await getOrCreateCollection({
+      wallet: wallet,
+    });
+    await dataProtectorSharing.setSubscriptionParams({
+      collectionId: collectionId,
+      price: rlcToNrlc(Number(10)),
+      duration: daysToSeconds(Number(28)),
     });
   };
 
@@ -42,31 +57,43 @@ export default function Profile() {
             <div className="grow">
               <Placeholder
                 action={
-                  <>
-                    <Button size="l" stretched onClick={copyToClipboard}>
-                      Share Creator Profile
-                    </Button>
-                    <Button
-                      size="l"
-                      stretched
-                      onClick={() => router.push("/profile/new")}
-                    >
-                      Create Content
-                    </Button>
-                  </>
+                  <Button size="l" stretched onClick={copyToClipboard}>
+                    Share Creator Profile
+                  </Button>
                 }
-                description="Be a creator, upload your content"
+                description="Let others join your VIP contents community"
                 header={`${address.slice(0, 4)}...${address.slice(-4)}`}
               />
-            </div>
-            <div className="grow">
+
+              <Placeholder
+                action={
+                  <Button size="l" stretched onClick={enableSubscription}>
+                    Enable Subcriptions
+                  </Button>
+                }
+                description="Allow users to subscribe your contents"
+                header={``}
+              />
+
+              <Placeholder
+                action={
+                  <Button
+                    size="l"
+                    stretched
+                    onClick={() => router.push("/profile/new")}
+                  >
+                    Create Content
+                  </Button>
+                }
+                description="Be a creator, upload your content"
+                header={``}
+              />
               <Placeholder
                 description=""
                 header={`Your Contents`}
                 action={<MyContents owner={address as `0x${string}`} />}
               ></Placeholder>
-            </div>
-            <div className="grow">
+
               <Placeholder
                 action={
                   <Button size="l" stretched onClick={() => disconnect()}>
@@ -133,9 +160,33 @@ export default function Profile() {
         {isError && <p>Error: {error.message}</p>}
         {isSuccess && (
           <ul>
-            {allCollections[0].protectedDatas.map((item: any) => (
-              <li key={item.id}>{item.name}</li>
-            ))}
+            {allCollections &&
+              allCollections.length > 0 &&
+              allCollections[0].protectedDatas.map(
+                (item: any, index: number) => {
+                  const imgIdx = (index % 10) + 1;
+                  console.log("🚀 ~ MyContents ~ imgIdx:", imgIdx);
+
+                  return (
+                    <li key={item.id}>
+                      <Card>
+                        <Card.Chip readOnly>{item.name}</Card.Chip>
+                        <img
+                          alt="Dog"
+                          src={`/creator/Card${imgIdx}.png`}
+                          style={{
+                            display: "block",
+                            height: 308,
+                            objectFit: "cover",
+                            width: "100%",
+                          }}
+                        />
+                        <Card.Cell readOnly>{item.name}</Card.Cell>
+                      </Card>
+                    </li>
+                  );
+                }
+              )}
           </ul>
         )}
       </div>

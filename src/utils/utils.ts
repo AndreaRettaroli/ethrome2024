@@ -25,3 +25,13 @@ export function getAvatarVisualNumber({
   }
   return `profile-avatar-bg-${chosenImageIndex}`;
 }
+
+
+export function rlcToNrlc(rlcValue: number) {
+  return rlcValue * 10 ** 9;
+}
+
+
+export function daysToSeconds(days: number) {
+  return days * 24 * 60 * 60;
+}
