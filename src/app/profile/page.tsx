@@ -5,21 +5,20 @@ import {
   Button,
   Card,
   Avatar,
-  Text,
+  
 } from "@telegram-apps/telegram-ui";
 
-import { useAccount, useConnect, useDisconnect } from "wagmi";
-import Sub from "@/components/Sub/Sub";
-import CreateButton from "@/components/Sub/Create";
+import { IExecDataProtectorSharing } from "@iexec/dataprotector";
+import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
+
 import { injected } from "wagmi/connectors";
-import { getAvatarVisualNumber, getCardVisualNumber } from "@/utils/utils";
+import { useQuery } from "@tanstack/react-query";
 
 export default function Profile() {
   const { address, chain } = useAccount();
   const { connect } = useConnect();
   const { disconnect } = useDisconnect();
-  //   const cardVisualBg = getCardVisualNumber({ address: address as string });
-  //   const avatarVisualBg = getAvatarVisualNumber({ address: address as string });
+
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
       {address ? (
@@ -52,10 +51,18 @@ export default function Profile() {
               />
             </div>
             <div className="grow">
+              <Placeholder description="" header={`Your Contents`}>
+                <MyContents owner={address as `0x${string}`} />
+              </Placeholder>
+            </div>
+            <div className="grow">
               <Placeholder
-                description=""
-                header={`Your Contents`}
-              ></Placeholder>
+                action={
+                  <Button size="s" stretched onClick={() => disconnect()}>
+                    Disconnect
+                  </Button>
+                }
+              />
             </div>
           </div>
         </>
@@ -88,56 +95,42 @@ export default function Profile() {
       )}
     </div>
   );
+
+  function MyContents({ owner }: { owner: `0x${string}` }) {
+    const { data: wallet } = useWalletClient();
+    const {
+      isLoading,
+      isSuccess,
+      data: allCollections,
+      isError,
+      error,
+    } = useQuery({
+      queryKey: ["allCollections-" + owner],
+      queryFn: async () => {
+        const dataProtectorSharing = new IExecDataProtectorSharing(wallet);
+        const { collections } =
+          await dataProtectorSharing.getCollectionsByOwner({
+            owner,
+          });
+        console.log("🚀 ~ queryFn: ~ collections:", collections);
+        return collections;
+      },
+    });
+
+    return (
+      <div>
+        {isLoading && <p>Loading...</p>}
+        {isError && <p>Error: {error.message}</p>}
+        {isSuccess && (
+          <ul>
+            {allCollections.map((collection: any) => (
+              <li key={collection.id}>
+                {collection.id} {collection.creationTimestamp.toString()}
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+    );
+  }
 }
-
-// import { createFileRoute, Outlet } from '@tanstack/react-router';
-// import { useUserStore } from '@/stores/user.store';
-// import { getAvatarVisualNumber } from '@/utils/getAvatarVisualNumber';
-// import { getCardVisualNumber } from '@/utils/getCardVisualNumber';
-// import { Avatar, Card, NavMenu } from '@telegram-apps/telegram-ui'; // Importing Telegram UI components
-
-// export const Route = createFileRoute("/_explore/_profile")({
-//   component: ProfileLayout,
-// });
-
-// export function ProfileLayout() {
-//   //const { address: userAddress } = useUserStore(); // Getting user address
-
-//   const cardVisualBg = getCardVisualNumber({ address: userAddress as string });
-//   const avatarVisualBg = getAvatarVisualNumber({
-//     address: userAddress as string,
-//   });
-
-//   return (
-//     <div className="relative">
-//       {/* Background card using Telegram UI Card component */}
-//       <Card
-//         className="absolute -top-40 mb-14 h-[228px] w-full rounded-3xl opacity-[0.22]"
-//         style={{
-//           backgroundImage: `url(${cardVisualBg})`,
-//           backgroundSize: "100% 100%",
-//           backgroundPosition: "center",
-//         }}
-//       />
-
-//       {/* Avatar using Telegram UI Avatar component */}
-//       <Avatar
-//         className="relative z-10 mb-10 mt-20 size-[118px] border-4 border-[#D9D9D9]"
-//         size={40}
-//         src={avatarVisualBg}
-//       />
-
-//       {/* Profile navigation menu */}
-//       <NavMenu>
-//         <NavMenu.Item text="Overview" />
-//         <NavMenu.Item text="Posts" />
-//         <NavMenu.Item text="Settings" />
-//       </NavMenu>
-
-//       {/* Outlet for nested routes
-//       <div className="mt-8">
-//         <Outlet />
-//       </div> */}
-//     </div>
-//   );
-// }
