@@ -6,6 +6,7 @@ import {
   IExecDataProtectorSharing,
   ProtectedDataInCollection,
 } from "@iexec/dataprotector";
+import { useLogin } from "@privy-io/react-auth";
 import { useQuery } from "@tanstack/react-query";
 import {
   Avatar,
@@ -16,12 +17,12 @@ import {
 } from "@telegram-apps/telegram-ui";
 import { Dispatch, SetStateAction, useState } from "react";
 
-import { useConnect, useWalletClient } from "wagmi";
-import { injected } from "wagmi/connectors";
+import { useWalletClient } from "wagmi";
+
 
 export default function Creator({ params }: { params: { address: string } }) {
   const { address } = params;
-  const { connect } = useConnect();
+  const { login } = useLogin();
   const { data: wallet } = useWalletClient();
   const {
     isLoading,
@@ -84,16 +85,12 @@ export default function Creator({ params }: { params: { address: string } }) {
           <div className="grow">
             <Placeholder
               action={
-                <Button
-                  size="l"
-                  stretched
-                  onClick={() => connect({ connector: injected() })}
-                >
+                <Button size="l" stretched onClick={() => login()}>
                   Connect
                 </Button>
               }
-              description="Join the best Telegram VIP betting community"
-              header="Telegram VIP Betting"
+              description="Join the best Telegram VIP communities experience"
+              header="Telegram VIP Communities"
             >
               <img
                 width={100}

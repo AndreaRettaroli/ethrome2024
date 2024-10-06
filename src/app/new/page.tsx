@@ -17,15 +17,14 @@ import {
 } from "@iexec/dataprotector";
 import { useAccount, useConnect, useWalletClient } from "wagmi";
 
-import { injected } from "wagmi/connectors";
-
 import { useState } from "react";
 import { getOrCreateCollection } from "@/utils/getOrCreateCollection";
 import { useRouter } from "next/navigation";
+import { useLogin } from "@privy-io/react-auth";
 
 export default function New() {
   const { address, chain } = useAccount();
-  const { connect } = useConnect();
+  const { login } = useLogin();
   const { data: wallet } = useWalletClient();
   const router = useRouter();
 
@@ -158,16 +157,12 @@ export default function New() {
           <div className="grow">
             <Placeholder
               action={
-                <Button
-                  size="l"
-                  stretched
-                  onClick={() => connect({ connector: injected() })}
-                >
+                <Button size="l" stretched onClick={() => login()}>
                   Connect
                 </Button>
               }
-              description="Join the best Telegram VIP betting community"
-              header="Telegram VIP Betting"
+              description="Join the best Telegram VIP communities experience"
+              header="Telegram VIP Communities"
             >
               <img
                 width={100}

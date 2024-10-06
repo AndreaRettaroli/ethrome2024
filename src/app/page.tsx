@@ -8,41 +8,59 @@ import { Placeholder, Button, Card, Avatar } from "@telegram-apps/telegram-ui";
 import { useRouter } from "next/navigation";
 import { useAccount, useConnect, useDisconnect, useWalletClient } from "wagmi";
 
-import { injected } from "wagmi/connectors";
+
 import { useQuery } from "@tanstack/react-query";
+import {
+  useLogin,
+  useLogout,
+  usePrivy,
+  useWallets,
+} from "@privy-io/react-auth";
 
 export default function Home() {
   const { address, chain } = useAccount();
-  const { connect } = useConnect();
-  const { disconnect } = useDisconnect();
 
+  const { ready, authenticated, user } = usePrivy();
+  const { wallets } = useWallets();
+  console.log("🚀 ~ Home ~ wallets:", wallets);
+  console.log("🚀 ~ Home ~ address:", user);
+  const { login } = useLogin();
+  const { logout } = useLogout();
+
+  console.log(
+    "🚀 ~ Home ~ ready, authenticated, user :",
+    ready,
+    authenticated,
+    user
+  );
   return (
     <>
-      {address ? (
+      {ready && authenticated && address ? (
         <Profile />
       ) : (
-      <div className="flex flex-col items-center justify-center min-h-screen">
-        <div className="grow">
-          <Placeholder
-            action={
-              <Button
-                size="l"
-                stretched
-                onClick={() => connect({ connector: injected() })}
-              >
-                Connect
-              </Button>
-            }
-            description="Join the best Telegram VIP communities experience"
-            header="Telegram VIP Communities"
-          >
-            <img
-              width={100}
-              height={100}
-              alt="Telegram sticker"
-              src="https://xelene.me/telegram.gif"
-            />
-        </Placeholder>
+        <div className="flex flex-col items-center justify-center min-h-screen">
+          <div className="grow">
+            <Placeholder
+              action={
+                <>
+                  <Button size="l" stretched onClick={() => login()}>
+                    Connect
+                  </Button>
+                  <Button size="l" stretched onClick={() => logout()}>
+                    disconnect
+                  </Button>
+                </>
+              }
+              description="Join the best Telegram VIP communities experience"
+              header="Telegram VIP Communities"
+            >
+              <img
+                width={100}
+                height={100}
+                alt="Telegram sticker"
+                src="https://xelene.me/telegram.gif"
+              />
+            </Placeholder>
           </div>
         </div>
       )}
@@ -52,10 +70,12 @@ export default function Home() {
 
 function Profile() {
   const { address, chain } = useAccount();
-  const { connect } = useConnect();
-  const { disconnect } = useDisconnect();
+  const { ready, authenticated, user } = usePrivy();
+  const { login } = useLogin();
+
   const { data: wallet } = useWalletClient();
   const router = useRouter();
+  const { logout } = useLogout();
 
   const copyToClipboard = () => {
     const textToCopy = `${address}`;
@@ -136,7 +156,7 @@ function Profile() {
 
               <Placeholder
                 action={
-                  <Button size="l" stretched onClick={() => disconnect()}>
+                  <Button size="l" stretched onClick={() => logout()}>
                     Disconnect
                   </Button>
                 }
@@ -149,16 +169,12 @@ function Profile() {
           <div className="grow">
             <Placeholder
               action={
-                <Button
-                  size="l"
-                  stretched
-                  onClick={() => connect({ connector: injected() })}
-                >
+                <Button size="l" stretched onClick={() => login()}>
                   Connect
                 </Button>
               }
-              description="Join the best Telegram VIP betting community"
-              header="Telegram VIP Betting"
+              description="Join the best Telegram VIP communities experience"
+              header="Telegram VIP Communities"
             >
               <img
                 width={100}

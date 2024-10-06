@@ -5,13 +5,12 @@ import { iXec } from "./wagmiConfig";
 export const privyConfig: PrivyClientConfig = {
   embeddedWallets: {
     createOnLogin: "users-without-wallets",
-    requireUserPasswordOnCreate: false,
     noPromptOnSignature: true,
     waitForTransactionConfirmation: true,
   },
   defaultChain: iXec,
   supportedChains: [iXec],
-  loginMethods: ["email"],
+  loginMethods: ["email", "wallet"],
   appearance: {
     showWalletLoginFirst: true,
   },
