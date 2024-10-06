@@ -55,7 +55,7 @@ export default function Profile() {
                 src={`/avatars/Avatar1.png`}
               />
             </div>
-            <div className="grow">
+            <div className="grow mb-20">
               <Placeholder
                 action={
                   <Button size="l" stretched onClick={copyToClipboard}>
@@ -173,7 +173,7 @@ export default function Profile() {
                       <Card>
                         <Card.Chip readOnly>{item.name}</Card.Chip>
                         <img
-                          alt="Dog"
+                          alt={`card content ${imgIdx}`}
                           src={`/creator/Card${imgIdx}.png`}
                           style={{
                             display: "block",
