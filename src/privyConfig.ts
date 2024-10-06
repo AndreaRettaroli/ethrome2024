@@ -10,7 +10,7 @@ export const privyConfig: PrivyClientConfig = {
   },
   defaultChain: iXec,
   supportedChains: [iXec],
-  loginMethods: ["email", "wallet"],
+  loginMethods: ["email", "wallet", "telegram"],
   appearance: {
     showWalletLoginFirst: true,
   },
