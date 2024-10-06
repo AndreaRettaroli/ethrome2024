@@ -32,7 +32,7 @@ export default function Home() {
                   stretched
                   onClick={() => connect({ connector: injected() })}
                 >
-                  Connect Hello
+                  Connect
                 </Button>
               }
               description="Join the best Telegram VIP communities experience"
