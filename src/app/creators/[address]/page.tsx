@@ -276,7 +276,7 @@ function Download({
         window.URL.revokeObjectURL(url);
       }}
     >
-      Download
+      View and Download
     </Button>
   );
 }
