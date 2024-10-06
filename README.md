@@ -1,3 +1,14 @@
+# Working Privy integration with metamask or email on branch and bot
+
+https://github.com/AndreaRettaroli/ethrome2024/tree/privy
+
+[t.me/test_eth_rome_bot](https://t.me/test_eth_rome_bot) With privy
+
+[t.me/ethrome24subbot/ethromesub](https://t.me/ethrome24subbot/ethromesub) without privy, better from web
+
+Note: The link only works if we keep the app active and provide access via Ngrok.
+
+
 # Telegram Mini Apps Next.js Template
 
 This template demonstrates how developers can implement a web application on the Telegram
