@@ -31,11 +31,12 @@ export default function Profile() {
     const collectionId = await getOrCreateCollection({
       wallet: wallet,
     });
-    await dataProtectorSharing.setSubscriptionParams({
+    const res = await dataProtectorSharing.setSubscriptionParams({
       collectionId: collectionId,
       price: rlcToNrlc(Number(10)),
       duration: daysToSeconds(Number(28)),
     });
+    console.log("🚀 ~ enableSubscription ~ res:", res);
   };
 
   return (
