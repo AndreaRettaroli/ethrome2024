@@ -89,7 +89,7 @@ export default function New() {
             });
           console.log("🚀 ~ handleSubmit ~ res:", res);
         }
-        router.push("/profile");
+        router.push("/");
       }
     } catch (e) {
       console.error("🚀 ~ handleSubmit ~ e:", e);
