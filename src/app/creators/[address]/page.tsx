@@ -199,7 +199,11 @@ function ProtectedData({
     },
   });
   console.log(protectedData?.protectedDataPricingParams.collection);
-  console.log("🚀 ~ protectedData:", protectedData);
+  console.log(
+    "🚀 ~ protectedData:",
+    protectedData,
+    protectedData?.protectedDataPricingParams.address
+  );
   return (
     <Card>
       <Card.Chip readOnly>{data.id}</Card.Chip>
@@ -218,7 +222,7 @@ function ProtectedData({
         <Download
           data={data}
           setContentUrl={setContentUrl}
-          protectedData={protectedData}
+          protectedData={protectedData?.protectedDataPricingParams.address}
         />
       </Card.Cell>
     </Card>
