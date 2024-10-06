@@ -58,7 +58,7 @@ function Profile() {
   const router = useRouter();
 
   const copyToClipboard = () => {
-    const textToCopy = `https://localhost:3000/creator/${address}`;
+    const textToCopy = `${address}`;
 
     navigator.clipboard.writeText(textToCopy).catch((err) => {
       console.error("Failed to copy text: ", err);
@@ -72,7 +72,7 @@ function Profile() {
     });
     const res = await dataProtectorSharing.setSubscriptionParams({
       collectionId: collectionId,
-      price: rlcToNrlc(Number(10)),
+      price: rlcToNrlc(Number(0)),
       duration: daysToSeconds(Number(28)),
     });
     console.log("🚀 ~ enableSubscription ~ res:", res);

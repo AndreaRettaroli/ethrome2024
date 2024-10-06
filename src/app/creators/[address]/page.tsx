@@ -126,6 +126,7 @@ function Subscription({
       <Placeholder
         action={
           <Button
+            disabled={isSubscription ? true : false}
             onClick={async () => {
               const dataProtectorSharing = new IExecDataProtectorSharing(
                 wallet
