@@ -5,7 +5,7 @@ import { useAccount } from "wagmi";
 export default function TabbarMenu() {
   const { address } = useAccount();
   const router = useRouter();
-  const tabs = ["explore", "profile", "creators"];
+  const tabs = ["explore", "profile"];
   return (
     <footer>
       {address && (
@@ -14,7 +14,7 @@ export default function TabbarMenu() {
             <Tabbar.Item
               key={tab}
               text={tab}
-              onClick={() => router.push(`/${tab}`)}
+              onClick={() => router.push(tab === "profile" ? "/" : `/${tab}`)}
             />
           ))}
         </Tabbar>

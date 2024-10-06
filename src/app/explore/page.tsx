@@ -12,7 +12,7 @@ export default function Explore() {
       onOpenChange={(open) => {
         if (!open) {
           setSearch("");
-          router.push("/profile");
+          router.push("/");
         }
       }}
     >
