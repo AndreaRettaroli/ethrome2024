@@ -166,8 +166,8 @@ export default function New() {
                   Connect
                 </Button>
               }
-              description="Join the best Telegram VIP betting community"
-              header="Telegram VIP Betting"
+              description="Join the best Telegram VIP communities experience"
+              header="Telegram VIP Communities"
             >
               <img
                 width={100}
