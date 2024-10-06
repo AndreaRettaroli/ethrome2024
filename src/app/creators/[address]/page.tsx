@@ -171,7 +171,7 @@ function Subscription({
       <Placeholder
         header="Contents"
         action={collection.protectedDatas.map((data, idx) => (
-          <ProtectedData data={data} idx={idx + 1} />
+          <ProtectedData data={data} idx={idx + 1} key={data.id} />
         ))}
       />
     </>

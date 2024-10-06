@@ -29,18 +29,18 @@ export default function New() {
   const { data: wallet } = useWalletClient();
   const router = useRouter();
 
-  const [selectedFile, setSelectedFile] = useState();
+  const [selectedFile, setSelectedFile] = useState<File | undefined>();
   const [isLoading, setIsLoading] = useState(false);
   const [toggle, setToggle] = useState(true);
 
-  const handleFileChange = (event) => {
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    const file = event.target.files[0]; // Only allows one file (multiple={false})
+    const file = event.target.files?.[0]; // Only allows one file (multiple={false})
     setSelectedFile(file);
     console.log("🚀 ~ handleFileChange ~ file:", selectedFile);
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async () => {
     setIsLoading(true);
     try {
       const dataProtector = new IExecDataProtector(wallet);
@@ -144,7 +144,7 @@ export default function New() {
                     size="l"
                     stretched
                     disabled={!selectedFile}
-                    onClick={(e) => handleSubmit(e)}
+                    onClick={(e) => handleSubmit()}
                   >
                     Submit
                   </Button>
