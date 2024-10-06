@@ -14,7 +14,8 @@ import {
   Placeholder,
   Spinner,
 } from "@telegram-apps/telegram-ui";
-import { parseGwei } from "viem";
+import { Dispatch, SetStateAction, useState } from "react";
+
 import { useConnect, useWalletClient } from "wagmi";
 import { injected } from "wagmi/connectors";
 
@@ -185,6 +186,7 @@ function ProtectedData({
   idx: number;
 }) {
   const { data: wallet } = useWalletClient();
+  const [contentUrl, setContentUrl] = useState<string>("");
   const { data: protectedData } = useQuery({
     queryKey: [data.id],
     queryFn: async () => {
@@ -197,12 +199,13 @@ function ProtectedData({
     },
   });
   console.log(protectedData?.protectedDataPricingParams.collection);
+  console.log("🚀 ~ protectedData:", protectedData);
   return (
     <Card>
       <Card.Chip readOnly>{data.id}</Card.Chip>
       <img
         alt={`Content Card ${idx}`}
-        src={`/creator/Card${idx}.png`}
+        src={contentUrl ? contentUrl : `/creator/Card${idx}.png`}
         style={{
           display: "block",
           height: 308,
@@ -212,28 +215,53 @@ function ProtectedData({
       />
       <Card.Cell readOnly>{data.name}</Card.Cell>
       <Card.Cell readOnly>
-        <Download data={data} />
+        <Download
+          data={data}
+          setContentUrl={setContentUrl}
+          protectedData={protectedData}
+        />
       </Card.Cell>
     </Card>
   );
 }
 
-function Download({ data }: { data: ProtectedDataInCollection }) {
+function Download({
+  data,
+  setContentUrl,
+  protectedData,
+}: {
+  data: ProtectedDataInCollection;
+  setContentUrl: Dispatch<SetStateAction<string>>;
+  protectedData: any;
+}) {
   const { data: wallet } = useWalletClient();
   return (
     <Button
       onClick={async () => {
         const dataProtectorSharing = new IExecDataProtectorSharing(wallet);
         console.log("start download");
-        const protectedData = await dataProtectorSharing.consumeProtectedData({
-          protectedData: data.id,
-          app: "0x1cb7D4F3FFa203F211e57357D759321C6CE49921",
-          path: data.name,
-        });
+        // const protectedData = await dataProtectorSharing.consumeProtectedData({
+        //   protectedData: data.id,
+        //   app: "0x1cb7D4F3FFa203F211e57357D759321C6CE49921",
+        //   path: data.name,
+        // });
+        const { taskId, result } =
+          await dataProtectorSharing.consumeProtectedData({
+            app: process.env.NEXT_PUBLIC_PROTECTED_DATA_DELIVERY_DAPP_ADDRESS!,
+            protectedData: protectedData,
+            path: "content",
+            workerpool: process.env.NEXT_PUBLIC_WORKERPOOL_ADDRESS,
+            onStatusUpdate: (status) => {
+              console.log("🚀 ~ onClick={ ~ status:", status);
+            },
+          });
+        console.log("🚀 ~ onClick={ ~ { taskId, result }:", { taskId, result });
         console.log("end download");
-        const arrayBuffer = protectedData.result;
-        const blob = new Blob([arrayBuffer]);
-        const url = window.URL.createObjectURL(blob);
+        const fileAsBlob = new Blob([result]);
+        const fileAsObjectURL = URL.createObjectURL(fileAsBlob);
+        setContentUrl(fileAsObjectURL);
+
+        const url = window.URL.createObjectURL(fileAsBlob);
         const a = document.createElement("a");
         a.style.display = "none";
         a.href = url;
