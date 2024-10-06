@@ -14,7 +14,7 @@ export default function TabbarMenu() {
             <Tabbar.Item
               key={tab}
               text={tab}
-              onClick={() => router.push(`/${tab != tabs[0] ? tab : ""}`)}
+              onClick={() => router.push(`/${tab}`)}
             />
           ))}
         </Tabbar>
